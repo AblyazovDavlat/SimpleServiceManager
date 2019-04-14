@@ -10,7 +10,7 @@ namespace wpf_manager
     [ServiceBehavior(InstanceContextMode = InstanceContextMode.Single)]
     public class ServiceManager : IServiceManager
     {
-        List<ServerUser> users = new List<ServerUser>();
+        Dictionary<ServerUser, List<ServiceData>> users = new Dictionary<ServerUser, List<ServiceData>>();
         int nextID = 1;
 
         public int Connect(string name)
@@ -23,37 +23,66 @@ namespace wpf_manager
             };
             nextID++;
 
-            SendMsg(user.Name, 0);
-            users.Add(user);
+            users.Add(user, new List<ServiceData>());
             return user.ID;
         }
 
         public void Disconnect(int id)
         {
-            var user = users.FirstOrDefault(i => i.ID == id);
+            var user = users.Keys.FirstOrDefault(i => i.ID == id);
             if (user != null)
             {
                 users.Remove(user);
-                SendMsg(user.Name + " disconnnected", 0);
             }
         }
 
+        public void SendChangeServiceStatus(string nameService, string status, int id)
+        {
+            var user = users.Keys.FirstOrDefault(i => i.ID == id);
+            List<ServiceData> services = new List<ServiceData>();
+            ServiceData service;
+            int index;
+
+            if (user != null)
+            {
+                services = users[user];
+                service = services.Find(x => x.name == nameService);
+                index = users[user].IndexOf(service);
+                users[user][index].status = status;
+            }
+
+            user.operationContext.GetCallbackChannel<IServiceManagerCallback>().MsgCallBack("Статус службы изменен на " + status);
+            user.operationContext.GetCallbackChannel<IServiceManagerCallback>().ChangeStatusCallBack(nameService, status);
+        }
 
         public void SendMsg(string msg, int id)
         {
-            foreach (var item in users)
+
+            string answer = DateTime.Now.ToShortTimeString();
+
+            var user = users.Keys.FirstOrDefault(i => i.ID == id);
+            if (user != null)
             {
-                string answer = DateTime.Now.ToShortTimeString();
-
-                var user = users.FirstOrDefault(i => i.ID == id);
-                if (user != null)
-                {
-                    answer += " " + user.Name + " ";
-                }
-                answer += msg;
-
-                item.operationContext.GetCallbackChannel <IServiceManagerCallback>().MsgCallBack(answer);
+                answer += " " + user.Name + " ";
             }
+            answer += msg;
+            user.operationContext.GetCallbackChannel <IServiceManagerCallback>().MsgCallBack(answer);
+
+        }
+
+        public void SendServices(List<ServiceData> services, int id)
+        {
+            var user = users.Keys.FirstOrDefault(i => i.ID == id);
+            if (user != null)
+            {
+                users[user] = services;
+            }
+            user.operationContext.GetCallbackChannel<IServiceManagerCallback>().MsgCallBack("Список сервисов отправлен.");
+            foreach (ServiceData serviceData in services)
+            {
+                user.operationContext.GetCallbackChannel<IServiceManagerCallback>().MsgCallBack(serviceData.name + " " + serviceData.status);
+            }
+            
         }
     }
 }

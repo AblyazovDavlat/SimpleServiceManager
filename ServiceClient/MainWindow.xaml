@@ -5,11 +5,14 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ServiceClient"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800" Loaded="Window_Loaded" Closing="Window_Closing">
+        Title="MainWindow" Height="550" Width="800" Loaded="Window_Loaded" Closing="Window_Closing">
     <Grid>
-        <TextBox x:Name="tbPCName" HorizontalAlignment="Left" Height="44" Margin="266,10,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="516"/>
+        <TextBox x:Name="tbPCName" HorizontalAlignment="Left" Height="44" Margin="266,10,0,0" TextWrapping="Wrap" Text="Под каким именем зарегестрировать пк?" VerticalAlignment="Top" Width="516"/>
         <Button Click="BtnConnect_Click" x:Name="btnConnect" Content="Connect" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="251" Height="44"/>
         <ListBox x:Name="lbLog" HorizontalAlignment="Left" Height="350" Margin="10,59,0,0" VerticalAlignment="Top" Width="772"/>
+        <Button x:Name="btnEnableService" Content="Enable" HorizontalAlignment="Left" Margin="10,414,0,0" VerticalAlignment="Top" Width="75" Height="52" Click="BtnEnableService_Click"/>
+        <Button x:Name="btnDisableService" Content="Disable" HorizontalAlignment="Left" Margin="90,414,0,0" VerticalAlignment="Top" Width="75" RenderTransformOrigin="0.5,0.5" Height="52" Click="BtnDisableService_Click"/>
+        <TextBox x:Name="tbServiceName" HorizontalAlignment="Left" Height="43" Margin="10,466,0,0" TextWrapping="Wrap" Text="Имя службы" VerticalAlignment="Top" Width="155"/>
 
     </Grid>
 </Window>

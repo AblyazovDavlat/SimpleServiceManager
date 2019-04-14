@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.ServiceProcess;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -12,6 +13,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using wpf_manager;
 
 namespace ServiceClient
 {
@@ -23,6 +25,9 @@ namespace ServiceClient
         bool isConnected = false;
         ServiceManager.ServiceManagerClient client;
         int ID;
+
+        ServiceController[] scServices;
+        List<ServiceData> serviceMessages;
 
         public MainWindow()
         {
@@ -38,6 +43,11 @@ namespace ServiceClient
                 tbPCName.IsEnabled = false;
                 btnConnect.Content = "Disconnect";
                 isConnected = true;
+
+                serviceMessages = new List<ServiceData>();
+                scServices = ServiceController.GetServices();
+                client.SendMsg("Подключен к серверу ", ID);
+                client.SendServices(ServiceData.ParseServiceControllerToMessage(scServices), ID);
             }
         }
         void DisconnectUser()
@@ -50,6 +60,28 @@ namespace ServiceClient
                 btnConnect.Content = "Connect";
                 isConnected = false;
             }
+        }
+
+        public void ChangeStatusCallBack(string nameService, string status)
+        {
+            ServiceController serviceController = scServices.FirstOrDefault(service => service.ServiceName == nameService);
+
+            if (serviceController != null)
+            {
+                if (status == "Running")
+                {
+                    serviceController.Start();
+                }
+                if (status == "Stopped")
+                {
+                    serviceController.Stop();
+                }
+            }
+            else
+            {
+                lbLog.Items.Add("Сервиса " + nameService + " не существует");
+            }
+
         }
 
 
@@ -77,6 +109,16 @@ namespace ServiceClient
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             DisconnectUser();
+        }
+
+        private void BtnEnableService_Click(object sender, RoutedEventArgs e)
+        {
+            client.SendChangeServiceStatus(tbServiceName.Text, "Running", ID);
+        }
+
+        private void BtnDisableService_Click(object sender, RoutedEventArgs e)
+        {
+            client.SendChangeServiceStatus(tbServiceName.Text, "Stopped", ID);
         }
     }
 }

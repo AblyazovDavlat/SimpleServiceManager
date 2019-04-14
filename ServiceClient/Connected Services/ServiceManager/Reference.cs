@@ -8,6 +8,10 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using wpf_manager;
+
 namespace ServiceClient.ServiceManager {
     
     
@@ -29,9 +33,21 @@ namespace ServiceClient.ServiceManager {
         
         [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/IServiceManager/SendMsg")]
         void SendMsg(string msg, int id);
-        
+
         [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/IServiceManager/SendMsg")]
         System.Threading.Tasks.Task SendMsgAsync(string msg, int id);
+
+        [System.ServiceModel.OperationContractAttribute(IsOneWay = true, Action = "http://tempuri.org/IServiceManager/SendServices")]
+        void SendServices(List<wpf_manager.ServiceData> services, int id);
+
+        [System.ServiceModel.OperationContractAttribute(IsOneWay = true, Action = "http://tempuri.org/IServiceManager/SendServices")]
+        System.Threading.Tasks.Task SendServicesAsync(List<wpf_manager.ServiceData> services, int id);
+
+        [System.ServiceModel.OperationContractAttribute(IsOneWay = true, Action = "http://tempuri.org/IServiceManager/SendChangeServiceStatus")]
+        void SendChangeServiceStatus(string nameService, string status, int id);
+
+        [System.ServiceModel.OperationContractAttribute(IsOneWay = true, Action = "http://tempuri.org/IServiceManager/SendChangeServiceStatus")]
+        System.Threading.Tasks.Task SendChangeServiceStatusAsync(string nameService, string status, int id);
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
@@ -39,6 +55,9 @@ namespace ServiceClient.ServiceManager {
         
         [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/IServiceManager/MsgCallBack")]
         void MsgCallBack(string msg);
+
+        [System.ServiceModel.OperationContractAttribute(IsOneWay = true, Action = "http://tempuri.org/IServiceManager/ChangeStatusCallBack")]
+        void ChangeStatusCallBack(string nameService, string status);
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
@@ -84,13 +103,35 @@ namespace ServiceClient.ServiceManager {
         public System.Threading.Tasks.Task DisconnectAsync(int id) {
             return base.Channel.DisconnectAsync(id);
         }
-        
+
+        public void SendChangeServiceStatus(string nameService, string status, int id)
+        {
+            base.Channel.SendChangeServiceStatus(nameService, status, id);
+        }
+
+        public Task SendChangeServiceStatusAsync(string nameService, string status, int id)
+        {
+            return base.Channel.SendChangeServiceStatusAsync(nameService, status, id);
+        }
+
         public void SendMsg(string msg, int id) {
             base.Channel.SendMsg(msg, id);
         }
-        
-        public System.Threading.Tasks.Task SendMsgAsync(string msg, int id) {
+        public System.Threading.Tasks.Task SendMsgAsync(string msg, int id)
+        {
             return base.Channel.SendMsgAsync(msg, id);
+        }
+
+
+        public void SendServices(List<wpf_manager.ServiceData> services, int id)
+        {
+            base.Channel.SendServices(services, id);
+        }
+
+
+        public Task SendServicesAsync(List<ServiceData> services, int id)
+        {
+            return base.Channel.SendServicesAsync(services, id);
         }
     }
 }

@@ -19,11 +19,21 @@ namespace wpf_manager
 
         [OperationContract(IsOneWay = true)]
         void SendMsg(string msg, int id);
+
+        [OperationContract(IsOneWay = true)]
+        void SendServices(List<ServiceData> services, int id);
+
+        [OperationContract(IsOneWay = true)]
+        void SendChangeServiceStatus(string nameService, string status, int id);
     }
     
     public interface IServiceManagerCallback
     {
         [OperationContract(IsOneWay = true)]
         void MsgCallBack(string msg);
+
+        [OperationContract(IsOneWay = true)]
+        void ChangeStatusCallBack(string nameService, string status);
+
     }
 }
